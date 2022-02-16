@@ -9,5 +9,8 @@
 //Superclass
 #import <IronSource/ISBaseAdAdapter.h>
 
+
+//IronSource Banner Adapter, Vrtcal as Secondary
+//This is a stub. IS Doesn't currently support mediation of their banners.
 @interface ISVRTCALCustomBanner : ISBaseAdAdapter
 @end

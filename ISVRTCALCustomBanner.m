@@ -6,6 +6,8 @@
 //  Copyright © 2021 VRTCAL. All rights reserved.
 //
 
+@import Foundation;
+
 //Header
 #import "ISVRTCALCustomBanner.h"
 
@@ -15,7 +17,7 @@
 #import "IronSource/ISAdapterAdDelegate.h"
 #import "IronSource/ISAdapterErrors.h"
 
-
+//IronSource Banner Adapter, Vrtcal as Secondary
 @interface ISVRTCALCustomBanner() <VRTBannerDelegate>
 @property (weak) UIViewController *viewControllerForModalPresentation;
 @property VRTBanner *vrtBanner;
@@ -24,6 +26,8 @@
 @end
 
 
+//IronSource Banner Adapter, Vrtcal as Secondary
+//This is a stub. IS Doesn't currently support mediation of their banners.
 @implementation ISVRTCALCustomBanner
 
 - (void)loadAdWithAdData:(nonnull ISAdData *)adData
@@ -82,12 +86,12 @@
 
 
 - (void)vrtBannerDidDismissModal:(nonnull VRTBanner *)vrtBanner ofType:(VRTModalType)modalType {
-    [self.delegate adDidClose];
+    //[self.delegate adDidClose];
 }
 
 
 - (void)vrtBannerDidPresentModal:(nonnull VRTBanner *)vrtBanner ofType:(VRTModalType)modalType {
-    [self.delegate adDidOpen];
+    //[self.delegate adDidOpen];
 }
 
 

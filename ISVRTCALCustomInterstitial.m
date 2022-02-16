@@ -7,6 +7,7 @@
 //
 
 //Header
+#import <Foundation/Foundation.h>
 #import "ISVRTCALCustomInterstitial.h"
 
 //Dependencies
@@ -16,18 +17,19 @@
 #import "IronSource/ISAdapterErrors.h"
 
 
+//IronSource Banner Adapter, Vrtcal as Secondary
 @interface ISVRTCALCustomInterstitial() <VRTInterstitialDelegate>
 @property (weak) UIViewController *viewControllerForModalPresentation;
 @property VRTInterstitial *vrtInterstitial;
 @property BOOL vrtcalAdLoaded;
-@property (weak) id<ISAdapterAdDelegate> delegate;
+@property (weak) id<ISInterstitialAdDelegate> delegate;
 @end
 
 
 @implementation ISVRTCALCustomInterstitial
 
 - (void)loadAdWithAdData:(nonnull ISAdData *)adData
-                delegate:(nonnull id<ISAdapterAdDelegate>)delegate {
+                delegate:(nonnull id<ISInterstitialAdDelegate>)delegate {
     
     self.delegate = delegate;
     

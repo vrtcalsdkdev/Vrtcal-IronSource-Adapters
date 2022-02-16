@@ -7,6 +7,7 @@
 //
 
 //Header
+#import <Foundation/Foundation.h>
 #import "ISVRTCALCustomAdapter.h"
 
 //Dependencies
