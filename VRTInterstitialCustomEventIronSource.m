@@ -12,7 +12,7 @@
 #import "VRTIronSourceManager.h"
 
 //IronSource Interstitial Adapter, Vrtcal as Primary
-@interface VRTInterstitialCustomEventIronSource() <ISDemandOnlyInterstitialDelegate>
+@interface VRTInterstitialCustomEventIronSource() <ISInterstitialDelegate>
 @property NSString *instanceId;
 @end
 
@@ -42,10 +42,15 @@
         //Init IronSource if it hasn't been already
         [[VRTIronSourceManager singleton] initIronSourceSDKWithAppKey:appKey forAdUnits:[NSSet setWithObject:IS_INTERSTITIAL]];
         
-        //Request an interstitial
-        [[VRTIronSourceManager singleton] requestInterstitialAdWithDelegate:self instanceID:self.instanceId];
+        //Check if an interstitial is ready
+        if ([IronSource hasInterstitial]) {
+            [self.customEventLoadDelegate customEventLoaded];
+            return;
+        }
         
-
+        //Request an interstitial
+        [IronSource setInterstitialDelegate:self];
+        [IronSource loadInterstitial];
     } @catch (NSException *exception) {
         
         NSString *description = [exception description];
@@ -57,37 +62,44 @@
 
 - (void) showInterstitialAd {
     UIViewController *vc = [self.viewControllerDelegate vrtViewControllerForModalPresentation];
-    [[VRTIronSourceManager singleton] presentInterstitialAdFromViewController:vc instanceID:self.instanceId];
+    [IronSource showInterstitialWithViewController:vc];
 }
 
 
 
 #pragma mark - ISInterstitialDelegate
-- (void)didClickInterstitial:(NSString *)instanceId {
+- (void)didClickInterstitial {
+    VRTLogWhereAmI();
     [self.customEventShowDelegate customEventClicked];
 }
 
-- (void)interstitialDidClose:(NSString *)instanceId {
+- (void)interstitialDidClose {
+    VRTLogWhereAmI();
     [self.customEventShowDelegate customEventDidDismissModal:VRTModalTypeInterstitial];
 }
 
-- (void)interstitialDidFailToLoadWithError:(NSError *)error instanceId:(NSString *)instanceId {
+- (void)interstitialDidFailToLoadWithError:(NSError *)error {
+    VRTLogWhereAmI();
     [self.customEventLoadDelegate customEventFailedToLoadWithError:error];
 }
 
-- (void)interstitialDidFailToShowWithError:(NSError *)error instanceId:(NSString *)instanceId {
+- (void)interstitialDidFailToShowWithError:(NSError *)error {
     //No VRT analog for this
+    VRTLogWhereAmI();
 }
 
-- (void)interstitialDidLoad:(NSString *)instanceId {
+- (void)interstitialDidLoad {
+    VRTLogWhereAmI();
     [self.customEventLoadDelegate customEventLoaded];
 }
 
-- (void)interstitialDidOpen:(NSString *)instanceId {
+- (void)interstitialDidOpen {
+    VRTLogWhereAmI();
     [self.customEventShowDelegate customEventWillPresentModal:VRTModalTypeInterstitial];
 }
 
-- (void)interstitialDidShow:(NSString *)instanceId {
+- (void)interstitialDidShow {
+    VRTLogWhereAmI();
     [self.customEventShowDelegate customEventDidPresentModal:VRTModalTypeInterstitial];
 }
 
