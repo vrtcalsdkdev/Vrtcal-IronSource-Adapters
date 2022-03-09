@@ -13,7 +13,7 @@
 //Dependencies
 #import <VrtcalSDK/VrtcalSDK.h>
 
-
+//Used by Vrtcal as Secondary Adapters
 @interface ISVRTCALCustomAdapter() <VrtcalSdkDelegate>
 @property (weak) id<ISNetworkInitializationDelegate> isNetworkInitializationDelegate;
 @end

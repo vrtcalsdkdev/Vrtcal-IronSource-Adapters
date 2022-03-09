@@ -17,7 +17,7 @@
 #import "IronSource/ISAdapterErrors.h"
 
 
-//IronSource Banner Adapter, Vrtcal as Secondary
+//IronSource Interstitial Adapter, Vrtcal as Secondary
 @interface ISVRTCALCustomInterstitial() <VRTInterstitialDelegate>
 @property (weak) UIViewController *viewControllerForModalPresentation;
 @property VRTInterstitial *vrtInterstitial;

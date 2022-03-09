@@ -18,6 +18,7 @@
 #import "IronSource/ISAdapterErrors.h"
 
 //IronSource Banner Adapter, Vrtcal as Secondary
+//This is a stub. IS Doesn't currently support mediation of their banners.
 @interface ISVRTCALCustomBanner() <VRTBannerDelegate>
 @property (weak) UIViewController *viewControllerForModalPresentation;
 @property VRTBanner *vrtBanner;
@@ -27,7 +28,6 @@
 
 
 //IronSource Banner Adapter, Vrtcal as Secondary
-//This is a stub. IS Doesn't currently support mediation of their banners.
 @implementation ISVRTCALCustomBanner
 
 - (void)loadAdWithAdData:(nonnull ISAdData *)adData

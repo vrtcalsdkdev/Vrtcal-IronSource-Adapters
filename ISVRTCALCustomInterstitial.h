@@ -9,6 +9,6 @@
 //Superclass
 #import <IronSource/ISBaseInterstitial.h>
 
-//IronSource Banner Adapter, Vrtcal as Secondary
+//IronSource Interstitial Adapter, Vrtcal as Secondary
 @interface ISVRTCALCustomInterstitial : ISBaseInterstitial
 @end

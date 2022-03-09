@@ -8,6 +8,8 @@
 
 #import <IronSource/IronSource.h>
 
+
+//Used by IronSource Interstitial Adapter, Vrtcal as Primary
 @interface VRTIronSourceManager : NSObject <ISDemandOnlyInterstitialDelegate>
 
 + (instancetype _Nonnull )singleton;

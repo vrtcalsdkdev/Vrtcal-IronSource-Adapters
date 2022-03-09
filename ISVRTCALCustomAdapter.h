@@ -10,5 +10,6 @@
 //Superclass
 #import <IronSource/ISBaseNetworkAdapter.h>
 
+//Used by Vrtcal as Secondary Adapters
 @interface ISVRTCALCustomAdapter : ISBaseNetworkAdapter
 @end

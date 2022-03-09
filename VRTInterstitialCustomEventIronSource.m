@@ -22,15 +22,7 @@
 - (void) loadInterstitialAd {
     
     @try {
-        
-        //Get and validate instance ID
-        self.instanceId = [self.customEventConfig.thirdPartyCustomEventData objectForKey:@"instanceId"];
-        if (![self stringIsGood:self.instanceId]) {
-            VRTError *vrtError = [VRTError errorWithCode:VRTErrorCodeInvalidParam format:@"IronSource instanceId of %@ unusable", self.instanceId];
-            [self.customEventLoadDelegate customEventFailedToLoadWithError:vrtError];
-            return;
-        }
-        
+
         //Get and validate app ID
         NSString *appKey = [self.customEventConfig.thirdPartyCustomEventData objectForKey:@"applicationKey"];
         if (![self stringIsGood:appKey]) {

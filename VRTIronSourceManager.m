@@ -12,6 +12,7 @@
 //Dependencies
 #import <VrtcalSDK/VrtcalSDK.h>
 
+//Used by IronSource Interstitial Adapter, Vrtcal as Primary
 @interface VRTIronSourceManager ()
 @property(nonatomic) NSMapTable<NSString *, id<ISDemandOnlyInterstitialDelegate>> *interstitialAdapterDelegates;
 @end
