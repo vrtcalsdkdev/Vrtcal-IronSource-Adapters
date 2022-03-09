@@ -24,9 +24,9 @@
     @try {
 
         //Get and validate app ID
-        NSString *appKey = [self.customEventConfig.thirdPartyCustomEventData objectForKey:@"applicationKey"];
+        NSString *appKey = [self.customEventConfig.thirdPartyCustomEventData objectForKey:@"appId"];
         if (![self stringIsGood:appKey]) {
-            VRTError *vrtError = [VRTError errorWithCode:VRTErrorCodeInvalidParam format:@"IronSource appKey of %@ unusable", appKey];
+            VRTError *vrtError = [VRTError errorWithCode:VRTErrorCodeInvalidParam format:@"IronSource appId of %@ unusable", appKey];
             [self.customEventLoadDelegate customEventFailedToLoadWithError:vrtError];
             return;
         }
