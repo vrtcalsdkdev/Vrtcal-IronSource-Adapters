@@ -8,7 +8,7 @@
 
 //Header
 #import <Foundation/Foundation.h>
-#import "ISVRTCALCustomInterstitial.h"
+#import "ISVRTCALCustomRewardedVideo.h"
 
 //Dependencies
 #import <VrtcalSDK/VrtcalSDK.h>
@@ -17,19 +17,19 @@
 #import "IronSource/ISAdapterErrors.h"
 
 
-//IronSource Interstitial Adapter, Vrtcal as Secondary
-@interface ISVRTCALCustomInterstitial() <VRTInterstitialDelegate>
+//IronSource Rewarded Video Adapter, Vrtcal as Secondary
+@interface ISVRTCALCustomRewardedVideo() <VRTInterstitialDelegate>
 @property (weak) UIViewController *viewControllerForModalPresentation;
 @property VRTInterstitial *vrtInterstitial;
 @property BOOL vrtcalAdLoaded;
-@property (weak) id<ISInterstitialAdDelegate> delegate;
+@property (weak) id<ISRewardedVideoAdDelegate> delegate;
 @end
 
 
-@implementation ISVRTCALCustomInterstitial
+@implementation ISVRTCALCustomRewardedVideo
 
 - (void)loadAdWithAdData:(nonnull ISAdData *)adData
-                delegate:(nonnull id<ISInterstitialAdDelegate>)delegate {
+                delegate:(nonnull id<ISRewardedVideoAdDelegate>)delegate {
     
     self.delegate = delegate;
     
@@ -105,6 +105,7 @@
 
 - (void)vrtInterstitialVideoCompleted:(nonnull VRTInterstitial *)vrtInterstitial {
     [self.delegate adDidEnd];
+    [self.delegate adRewarded];
 }
 
 - (void)vrtInterstitialVideoStarted:(nonnull VRTInterstitial *)vrtInterstitial {
