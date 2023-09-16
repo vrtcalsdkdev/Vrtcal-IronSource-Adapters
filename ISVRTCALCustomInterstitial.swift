@@ -11,7 +11,7 @@ import IronSource
 import VrtcalSDK
 
 // IronSource Interstitial Adapter, Vrtcal as Secondary
-class ISVRTCALCustomInterstitial: ISBaseInterstitial, VRTInterstitialDelegate {
+class ISVRTCALCustomInterstitial: ISBaseInterstitial {
     private weak var viewControllerForModalPresentation: UIViewController?
     private var vrtInterstitial: VRTInterstitial?
     private var vrtcalAdLoaded = false
@@ -24,16 +24,19 @@ class ISVRTCALCustomInterstitial: ISBaseInterstitial, VRTInterstitialDelegate {
 
         self.delegate = delegate
 
-        let strZoneId = adData.configuration["zoneid"] as? String
-        let zoneId = Int(strZoneId ?? "") ?? 0
-        if zoneId <= 0 {
-            let error = VRTError(
+        guard let strZoneId = adData.configuration["zoneid"] as? String,
+        let zoneId = Int(strZoneId),
+        zoneId > 0 else {
+            let vrtError = VRTError(
                 vrtErrorCode: .invalidParam,
-                message: "Unusable zoneId of \(zoneId). Vrtcal ads require a Zone ID (unsigned int) to serve ads"
+                message: "Unusable zoneid field in adData.configuration: \(adData.configuration). Vrtcal ads require a Zone ID (unsigned int) to serve ads"
             )
-            let errorDescription = error.description()
 
-            self.delegate.adDidFailToLoadWithErrorType(ISAdapterErrorTypeInternal, errorCode: ISAdapterErrorMissingParams, errorMessage: errorDescription)
+            self.delegate?.adDidFailToLoadWith(
+                .internal,
+                errorCode: ISAdapterErrors.missingParams.rawValue,
+                errorMessage: "\(vrtError)"
+            )
             return
         }
 
@@ -42,7 +45,7 @@ class ISVRTCALCustomInterstitial: ISBaseInterstitial, VRTInterstitialDelegate {
         vrtInterstitial?.loadAd(zoneId)
     }
 
-    func isAdAvailable(with adData: ISAdData) -> Bool {
+    override func isAdAvailable(with adData: ISAdData) -> Bool {
         return vrtcalAdLoaded
     }
 
@@ -51,12 +54,14 @@ class ISVRTCALCustomInterstitial: ISBaseInterstitial, VRTInterstitialDelegate {
         vrtInterstitial?.showAd()
     }
 
-    func releaseMemory() {
+    override func releaseMemory() {
         vrtcalAdLoaded = false
         vrtInterstitial = nil
     }
+}
 
-    // MARK: - VRTInterstitialDelegate
+// MARK: - VRTInterstitialDelegate
+extension ISVRTCALCustomInterstitial: VRTInterstitialDelegate {
 
     func vrtInterstitialAdClicked(_ vrtInterstitial: VRTInterstitial) {
         delegate?.adDidClick()
@@ -72,11 +77,18 @@ class ISVRTCALCustomInterstitial: ISBaseInterstitial, VRTInterstitialDelegate {
     }
 
     func vrtInterstitialAdFailed(toLoad vrtInterstitial: VRTInterstitial, error: Error) {
-        delegate?.adDidFailToLoadWithErrorType(ISAdapterErrorTypeNoFill, errorCode: 0, errorMessage: error.description())
+        delegate?.adDidFailToLoadWith(
+            .noFill,
+            errorCode: 0,
+            errorMessage: "\(error)"
+        )
     }
 
     func vrtInterstitialAdFailed(toShow vrtInterstitial: VRTInterstitial, error: Error) {
-        delegate?.adDidFailToShowWithErrorCode(ISAdapterErrorInternal, errorMessage: error.description())
+        delegate?.adDidFailToShowWithErrorCode(
+            ISAdapterErrors.internal.rawValue,
+            errorMessage: "\(error)"
+        )
     }
 
     func vrtInterstitialAdLoaded(_ vrtInterstitial: VRTInterstitial) {
@@ -104,8 +116,10 @@ class ISVRTCALCustomInterstitial: ISBaseInterstitial, VRTInterstitialDelegate {
         delegate?.adDidStart()
     }
 
-    func vrtViewControllerForModalPresentation() -> UIViewController {
+    func vrtViewControllerForModalPresentation() -> UIViewController? {
         return viewControllerForModalPresentation!
     }
+
+    
 }
 

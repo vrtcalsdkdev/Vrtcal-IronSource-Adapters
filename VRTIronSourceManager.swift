@@ -5,60 +5,61 @@
 //  Copyright © 2021 VRTCAL. All rights reserved.
 //
 
-//Header
+
 import IronSource
+import VrtcalSDK
 
-//Used by IronSource Interstitial Adapter, Vrtcal as Primary
-
-class VRTIronSourceManager: NSObject, ISDemandOnlyInterstitialDelegate {
-    private var interstitialAdapterDelegates: [String: ISDemandOnlyInterstitialDelegate]
+// Used by IronSource Interstitial Adapter, Vrtcal as Primary
+// Note that Ironsource doesn't currently allow mediation of their banners
+class VRTIronSourceManager {
 
     static let singleton = VRTIronSourceManager()
-
-
-    override init() {
-        super.init()
-        //Init the map table such that it will not retain adapters referenced by it
-        interstitialAdapterDelegates = NSMapTable(keyOptions: .strongMemory, valueOptions: .weakMemory)
-
+    var isDemandOnlyInterstitialDelegatePassthrough = ISDemandOnlyInterstitialDelegatePassthrough()
+    
+    init() {
         let mediationName = "vrtcal"
         let isMediationVersion = "500"
         let vrtcalSdkVersion = VrtcalSDK.sdkVersion()
         let mediationType = "\(mediationName)\(isMediationVersion)SDK\(vrtcalSdkVersion)"
-
-        IronSource.mediationType = mediationType
+        
+        IronSource.setMediationType(mediationType)
     }
-
+    
     // MARK: - API
-
-    func initIronSourceSDK(withAppKey appKey: String, forAdUnits adUnits: Set<AnyHashable>) {
-        if adUnits.member(IS_INTERSTITIAL) != nil {
-
-            #warning("[Swiftify] failed to move the `dispatch_once()` block below to a static variable initializer")
-            {
-                IronSource.isDemandOnlyInterstitialDelegate = self
-            }
-        }
-
-        IronSource.initISDemandOnly(appKey, adUnits: Array(adUnits))
+    
+    func initIronSourceSDK(
+        withAppKey appKey: String
+    ) {
+        IronSource.setISDemandOnlyInterstitialDelegate(isDemandOnlyInterstitialDelegatePassthrough)
+        IronSource.initISDemandOnly(appKey, adUnits: Array([IS_INTERSTITIAL]))
     }
-
+    
     //Demand-Only Interstitials
-    func requestInterstitialAd(with delegate: ISDemandOnlyInterstitialDelegate, instanceID: String) {
+    func requestInterstitialAd(
+        with delegate: ISDemandOnlyInterstitialDelegate,
+        instanceID: String
+    ) {
 
-        if delegate == nil {
-            VRTLogError("Delegate is nil")
-            return
-        }
+        let isDemandOnlyInterstitialDelegateWeakRef = ISDemandOnlyInterstitialDelegateWeakRef(
+            isDemandOnlyInterstitialDelegate: delegate
+        )
 
-        add(delegate, forInstanceID: instanceID)
+        isDemandOnlyInterstitialDelegatePassthrough.delegates[instanceID] = isDemandOnlyInterstitialDelegateWeakRef
+        
         IronSource.loadISDemandOnlyInterstitial(instanceID)
     }
-
-    func presentInterstitialAd(from viewController: UIViewController, instanceID: String) {
+    
+    func presentInterstitialAd(
+        from viewController: UIViewController,
+        instanceID: String
+    ) {
         IronSource.showISDemandOnlyInterstitial(viewController, instanceId: instanceID)
     }
+}
 
+
+
+/*
     // MARK: - Delegate Pass-Through
 
 
@@ -67,64 +68,6 @@ class VRTIronSourceManager: NSObject, ISDemandOnlyInterstitialDelegate {
 
     // MARK: ISDemandOnlyInterstitialDelegate
 
-    func interstitialDidLoad(_ instanceId: String?) {
-
-        let delegate = getInterstitialDelegate(forInstanceID: instanceId)
-
-        if let delegate {
-            delegate.interstitialDidLoad(instanceId)
-        } else {
-            VRTLogError("delegate is nil")
-        }
-    }
-
-    func interstitialDidFailToLoadWithError(_ error: Error?, instanceId: String?) {
-        let delegate = getInterstitialDelegate(forInstanceID: instanceId)
-        if let delegate {
-            delegate.interstitialDidFailToLoadWithError(error, instanceId: instanceId)
-            removeInterstitialDelegate(forInstanceID: instanceId)
-        } else {
-            VRTLogError("delegate is nil")
-        }
-    }
-
-    func interstitialDidOpen(_ instanceId: String?) {
-        let delegate = getInterstitialDelegate(forInstanceID: instanceId)
-        if let delegate {
-            delegate.interstitialDidOpen(instanceId)
-        } else {
-            VRTLogError("delegate is nil")
-        }
-    }
-
-    func interstitialDidClose(_ instanceId: String?) {
-        let delegate = getInterstitialDelegate(forInstanceID: instanceId)
-        if let delegate {
-            delegate.interstitialDidClose(instanceId)
-            removeInterstitialDelegate(forInstanceID: instanceId)
-        } else {
-            VRTLogError("delegate is nil")
-        }
-    }
-
-    func interstitialDidFailToShowWithError(_ error: Error?, instanceId: String?) {
-        let delegate = getInterstitialDelegate(forInstanceID: instanceId)
-        if let delegate {
-            delegate.interstitialDidFailToShowWithError(error, instanceId: instanceId)
-            removeInterstitialDelegate(forInstanceID: instanceId)
-        } else {
-            VRTLogError("delegate is nil")
-        }
-    }
-
-    func didClickInterstitial(_ instanceId: String?) {
-        let delegate = getInterstitialDelegate(forInstanceID: instanceId)
-        if let delegate {
-            delegate.didClickInterstitial(instanceId)
-        } else {
-            VRTLogError("delegate is nil")
-        }
-    }
 
     //#pragma Map Utils methods
 
@@ -150,7 +93,4 @@ class VRTIronSourceManager: NSObject, ISDemandOnlyInterstitialDelegate {
         objc_sync_exit(interstitialAdapterDelegates)
     }
 }
-
-//Dependencies
-
-//Used by IronSource Interstitial Adapter, Vrtcal as Primary
+*/

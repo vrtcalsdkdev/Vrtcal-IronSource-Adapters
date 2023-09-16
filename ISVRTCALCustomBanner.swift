@@ -1,27 +1,12 @@
-//  Converted to Swift 5.8.1 by Swiftify v5.8.26605 - https://swiftify.com/
-//
-//  ISVRTCALCustomBanner.swift
-//  VrtcalSDKInternalTestApp
-//
-//  Created by Scott McCoy on 12/20/21.
-//  Copyright © 2021 VRTCAL. All rights reserved.
-//
 
-//Superclass
-//
-//  ISVRTCALCustomBanner.swift
-//  VrtcalSDKInternalTestApp
-//
-//  Created by Scott McCoy on 12/20/21.
-//  Copyright © 2021 VRTCAL. All rights reserved.
-//
-
+/*
 import Foundation
 import IronSource
 import VrtcalSDK
 
-//IronSource Banner Adapter, Vrtcal as Secondary
-//This is a stub. IS Doesn't currently support mediation of their banners.
+// IronSource Banner Adapter, Vrtcal as Secondary
+// IS Doesn't currently support mediation of their banners.
+
 
 class ISVRTCALCustomBanner: ISBaseAdAdapter {
     private weak var viewControllerForModalPresentation: UIViewController?
@@ -29,7 +14,7 @@ class ISVRTCALCustomBanner: ISBaseAdAdapter {
     private var vrtcalAdLoaded = false
     private weak var delegate: ISAdapterAdDelegate?
     
-    override func loadAd(
+    func loadAd(
         with adData: ISAdData,
         delegate: ISAdapterAdDelegate
     ) {
@@ -45,7 +30,11 @@ class ISVRTCALCustomBanner: ISBaseAdAdapter {
             ).description
             
             
-            self.delegate.adDidFailToLoadWithErrorType(ISAdapterErrorTypeInternal, errorCode: ISAdapterErrorMissingParams, errorMessage: errorMessage)
+            self.delegate?.adDidFailToLoadWith(
+                .internal,
+                errorCode: ISAdapterErrors.missingParams.rawValue,
+                errorMessage: errorMessage
+            )
             return
         }
         
@@ -58,7 +47,11 @@ class ISVRTCALCustomBanner: ISBaseAdAdapter {
         return vrtcalAdLoaded
     }
     
-    func showAd(with viewController: UIViewController, adData: ISAdData, delegate: ISAdapterAdDelegate) {
+    func showAd(
+        with viewController: UIViewController,
+        adData: ISAdData,
+        delegate: ISAdapterAdDelegate
+    ) {
         viewControllerForModalPresentation = viewController
     }
     
@@ -74,8 +67,12 @@ extension ISVRTCALCustomBanner : VRTBannerDelegate {
         delegate?.adDidClick()
     }
 
-    func vrtBannerAdFailed(toLoad vrtBanner: VRTBanner, error: Error) {
-        delegate?.adDidFailToLoadWithErrorType(ISAdapterErrorTypeNoFill, errorCode: 0, errorMessage: error.description())
+    func vrtBannerAdFailedToLoad(_ vrtBanner: VRTBanner, error: Error) {
+        delegate?.adDidFailToLoadWith(
+            .noFill,
+            errorCode: 0,
+            errorMessage: "\(error)"
+        )
     }
 
     func vrtBannerAdLoaded(_ vrtBanner: VRTBanner, withAdSize adSize: CGSize) {
@@ -114,3 +111,4 @@ extension ISVRTCALCustomBanner : VRTBannerDelegate {
         return viewControllerForModalPresentation!
     }
 }
+*/

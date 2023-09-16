@@ -1,22 +1,4 @@
-//  Converted to Swift 5.8.1 by Swiftify v5.8.26605 - https://swiftify.com/
-//
-//  ISVRTCALCustomInterstitial.h
-//  VrtcalSDKInternalTestApp
-//
-//  Created by Scott McCoy on 12/20/21.
-//  Copyright © 2021 VRTCAL. All rights reserved.
-//
 
-//Superclass
-//
-//  ISVRTCALCustomInterstitial.m
-//  VrtcalSDKInternalTestApp
-//
-//  Created by Scott McCoy on 12/20/21.
-//  Copyright © 2021 VRTCAL. All rights reserved.
-//
-
-//Header
 import Foundation
 import IronSource
 import VrtcalSDK
@@ -36,13 +18,19 @@ class ISVRTCALCustomRewardedVideo: ISBaseRewardedVideo, VRTInterstitialDelegate 
 
         self.delegate = delegate
 
-        let strZoneId = adData.configuration["zoneid"] as? String
-        let zoneId = Int(strZoneId ?? "") ?? 0
-        if zoneId <= 0 {
-            let error = VRTError(code: VRTErrorCodeInvalidParam, format: "Unusable zoneId of %i. Vrtcal ads require a Zone ID (unsigned int) to serve ads", zoneId) as? Error
-            let errorDescription = error?.description()
+        guard let strZoneId = adData.configuration["zoneid"] as? String,
+        let zoneId = Int(strZoneId),
+        zoneId > 0 else {
+            let vrtError = VRTError(
+                vrtErrorCode: .invalidParam,
+                message: "Unusable zoneid field in adData.configuration: \(adData.configuration). Vrtcal ads require a Zone ID (unsigned int) to serve ads"
+            )
 
-            self.delegate.adDidFailToLoadWithErrorType(ISAdapterErrorTypeInternal, errorCode: ISAdapterErrorMissingParams, errorMessage: errorDescription)
+            self.delegate?.adDidFailToLoadWith(
+                .internal,
+                errorCode: ISAdapterErrors.missingParams.rawValue,
+                errorMessage: "\(vrtError)"
+            )
             return
         }
 
@@ -51,7 +39,7 @@ class ISVRTCALCustomRewardedVideo: ISBaseRewardedVideo, VRTInterstitialDelegate 
         vrtInterstitial?.loadAd(zoneId)
     }
 
-    func isAdAvailable(with adData: ISAdData) -> Bool {
+    override func isAdAvailable(with adData: ISAdData) -> Bool {
         return vrtcalAdLoaded
     }
 
@@ -60,7 +48,7 @@ class ISVRTCALCustomRewardedVideo: ISBaseRewardedVideo, VRTInterstitialDelegate 
         vrtInterstitial?.showAd()
     }
 
-    func releaseMemory() {
+    override func releaseMemory() {
         vrtcalAdLoaded = false
         vrtInterstitial = nil
     }
@@ -81,11 +69,18 @@ class ISVRTCALCustomRewardedVideo: ISBaseRewardedVideo, VRTInterstitialDelegate 
     }
 
     func vrtInterstitialAdFailed(toLoad vrtInterstitial: VRTInterstitial, error: Error) {
-        delegate?.adDidFailToLoadWithErrorType(ISAdapterErrorTypeNoFill, errorCode: 0, errorMessage: error.description())
+        delegate?.adDidFailToLoadWith(
+            .noFill,
+            errorCode: 0,
+            errorMessage: "\(error)"
+        )
     }
 
     func vrtInterstitialAdFailed(toShow vrtInterstitial: VRTInterstitial, error: Error) {
-        delegate?.adDidFailToShowWithErrorCode(ISAdapterErrorInternal, errorMessage: error.description())
+        delegate?.adDidFailToShowWithErrorCode(
+            ISAdapterErrors.internal.rawValue,
+            errorMessage: "\(error)"
+        )
     }
 
     func vrtInterstitialAdLoaded(_ vrtInterstitial: VRTInterstitial) {
@@ -114,8 +109,8 @@ class ISVRTCALCustomRewardedVideo: ISBaseRewardedVideo, VRTInterstitialDelegate 
         delegate?.adDidStart()
     }
 
-    func vrtViewControllerForModalPresentation() -> UIViewController {
-        return viewControllerForModalPresentation!
+    func vrtViewControllerForModalPresentation() -> UIViewController? {
+        return viewControllerForModalPresentation
     }
 }
 

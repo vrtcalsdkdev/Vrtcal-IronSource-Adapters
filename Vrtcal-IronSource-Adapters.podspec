@@ -10,10 +10,10 @@ Pod::Spec.new do |s|
     s.author       = { "Scott McCoy" => "scott.mccoy@vrtcal.com" }
     
     s.source       = { :git => "https://github.com/vrtcalsdkdev/Vrtcal-IronSource-Adapters.git", :tag => "#{s.version}" }
-    s.source_files = "*.{h,m}"
+    s.source_files = "*.swift"
 
     s.platform = :ios
-    s.ios.deployment_target  = '10.0'
+    s.ios.deployment_target = '11.0'
 
     s.dependency 'IronSourceSDK'
     s.dependency 'VrtcalSDK'
