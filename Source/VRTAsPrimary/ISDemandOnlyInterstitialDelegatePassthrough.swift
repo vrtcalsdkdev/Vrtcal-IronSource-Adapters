@@ -17,6 +17,7 @@ class ISDemandOnlyInterstitialDelegatePassthrough: NSObject, ISDemandOnlyInterst
     var delegates = [String: ISDemandOnlyInterstitialDelegateWeakRef]()
     
     func interstitialDidLoad(_ instanceId: String?) {
+        VRTLogInfo()
         
         guard let instanceId else {
             VRTLogError("instanceId is nil")
@@ -32,6 +33,8 @@ class ISDemandOnlyInterstitialDelegatePassthrough: NSObject, ISDemandOnlyInterst
     }
     
     func interstitialDidFailToLoadWithError(_ error: Error?, instanceId: String?) {
+        VRTLogInfo()
+        
         guard let instanceId else {
             VRTLogError("instanceId is nil")
             return
@@ -48,6 +51,8 @@ class ISDemandOnlyInterstitialDelegatePassthrough: NSObject, ISDemandOnlyInterst
     }
     
     func interstitialDidOpen(_ instanceId: String?) {
+        VRTLogInfo()
+
         guard let instanceId else {
             VRTLogError("instanceId is nil")
             return
@@ -62,7 +67,8 @@ class ISDemandOnlyInterstitialDelegatePassthrough: NSObject, ISDemandOnlyInterst
     }
     
     func interstitialDidClose(_ instanceId: String?) {
-        
+        VRTLogInfo()
+
         guard let instanceId else {
             VRTLogError("instanceId is nil")
             return
@@ -79,6 +85,8 @@ class ISDemandOnlyInterstitialDelegatePassthrough: NSObject, ISDemandOnlyInterst
     }
     
     func interstitialDidFailToShowWithError(_ error: Error?, instanceId: String?) {
+        VRTLogInfo()
+
         guard let instanceId else {
             VRTLogError("instanceId is nil")
             return
@@ -95,6 +103,8 @@ class ISDemandOnlyInterstitialDelegatePassthrough: NSObject, ISDemandOnlyInterst
     }
     
     func didClickInterstitial(_ instanceId: String?) {
+        VRTLogInfo()
+
         guard let instanceId else {
             VRTLogError("instanceId is nil")
             return
