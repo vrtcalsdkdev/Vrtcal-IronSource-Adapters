@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
     s.name         = "Vrtcal-IronSource-Adapters"
-    s.version      = "1.0.7"
+    s.version      = "1.1.0"
     s.summary      = "Allows mediation with Vrtcal as either the primary or secondary SDK"
     s.homepage     = "http://vrtcal.com"
     s.license = { :type => 'Copyright', :text => <<-LICENSE
@@ -15,7 +15,7 @@ Pod::Spec.new do |s|
     s.platform = :ios
     s.ios.deployment_target = '11.0'
 
-    s.dependency 'IronSourceSDK'
+    s.dependency 'IronSourceSDK', '~> 8.0.0'
     s.dependency 'VrtcalSDK'
 
     s.pod_target_xcconfig = {

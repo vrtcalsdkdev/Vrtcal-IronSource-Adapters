@@ -13,7 +13,7 @@ import IronSource
 
 class VRTInterstitialCustomEventIronSource: VRTAbstractInterstitialCustomEvent {
     private var instanceId: String?
-    var isInterstitialDelegatePassthrough = ISInterstitialDelegatePassthrough()
+    var levelPlayInterstitialDelegatePassthrough = LevelPlayInterstitialDelegatePassthrough()
     
     override func loadInterstitialAd() {
 
@@ -37,10 +37,10 @@ class VRTInterstitialCustomEventIronSource: VRTAbstractInterstitialCustomEvent {
         }
 
         //Request an interstitial
-        isInterstitialDelegatePassthrough.customEventLoadDelegate = customEventLoadDelegate
-        isInterstitialDelegatePassthrough.customEventShowDelegate = customEventShowDelegate
+        levelPlayInterstitialDelegatePassthrough.customEventLoadDelegate = customEventLoadDelegate
+        levelPlayInterstitialDelegatePassthrough.customEventShowDelegate = customEventShowDelegate
         
-        IronSource.setInterstitialDelegate(isInterstitialDelegatePassthrough)
+        IronSource.setLevelPlayInterstitialDelegate(levelPlayInterstitialDelegatePassthrough)
         IronSource.loadInterstitial()
 
     }
@@ -55,22 +55,22 @@ class VRTInterstitialCustomEventIronSource: VRTAbstractInterstitialCustomEvent {
 }
 
 // MARK: - ISInterstitialDelegate
-class ISInterstitialDelegatePassthrough: NSObject, ISInterstitialDelegate {
+class LevelPlayInterstitialDelegatePassthrough: NSObject, LevelPlayInterstitialDelegate {
 
     weak var customEventShowDelegate: VRTCustomEventShowDelegate?
     weak var customEventLoadDelegate: VRTCustomEventLoadDelegate?
     
-    func didClickInterstitial() {
+    func didClick(with adInfo: ISAdInfo!) {
         VRTLogInfo()
         customEventShowDelegate?.customEventClicked()
     }
 
-    func interstitialDidClose() {
+    func didClose(with adInfo: ISAdInfo!) {
         VRTLogInfo()
         customEventShowDelegate?.customEventDidDismissModal(.interstitial)
     }
 
-    func interstitialDidFailToLoadWithError(_ error: Error?) {
+    func didFailToLoadWithError(_ error: (any Error)!) {
         VRTLogInfo()
         
         let vrtError = VRTError(
@@ -81,22 +81,22 @@ class ISInterstitialDelegatePassthrough: NSObject, ISInterstitialDelegate {
         customEventLoadDelegate?.customEventFailedToLoad(vrtError: vrtError)
     }
 
-    func interstitialDidFailToShowWithError(_ error: Error?) {
+    func didFailToShowWithError(_ error: (any Error)!, andAdInfo adInfo: ISAdInfo!) {
         //No VRT analog for this
         VRTLogInfo()
     }
 
-    func interstitialDidLoad() {
+    func didLoad(with adInfo: ISAdInfo!) {
         VRTLogInfo()
         customEventLoadDelegate?.customEventLoaded()
     }
 
-    func interstitialDidOpen() {
+    func didOpen(with adInfo: ISAdInfo!) {
         VRTLogInfo()
         customEventShowDelegate?.customEventWillPresentModal(.interstitial)
     }
 
-    func interstitialDidShow() {
+    func didShow(with adInfo: ISAdInfo!) {
         VRTLogInfo()
         customEventShowDelegate?.customEventDidPresentModal(.interstitial)
     }
