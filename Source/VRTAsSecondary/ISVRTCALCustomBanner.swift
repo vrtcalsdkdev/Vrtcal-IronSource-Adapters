@@ -7,7 +7,7 @@ import VrtcalSDK
 // IronSource Banner Adapter, Vrtcal as Secondary
 // IS Doesn't currently support mediation of their banners.
 
-
+@objc(ISVRTCALCustomBanner)
 class ISVRTCALCustomBanner: ISBaseAdAdapter {
     private weak var viewControllerForModalPresentation: UIViewController?
     private var vrtBanner: VRTBanner?

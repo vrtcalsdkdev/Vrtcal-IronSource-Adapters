@@ -3,73 +3,104 @@ import Foundation
 import IronSource
 import VrtcalSDK
 
-//IronSource Rewarded Video Adapter, Vrtcal as Secondary
-
-class ISVRTCALCustomRewardedVideo: ISBaseRewardedVideo, VRTInterstitialDelegate {
+// IronSource Rewarded Video Adapter, Vrtcal as Secondary
+@objc(ISVRTCALCustomRewardedVideo)
+final class ISVRTCALCustomRewardedVideo: ISBaseRewardedVideo {
+    
+    private var isRewardedVideoAdDelegate: ISRewardedVideoAdDelegate?
+    
     private weak var viewControllerForModalPresentation: UIViewController?
     private var vrtInterstitial: VRTInterstitial?
     private var vrtcalAdLoaded = false
-    private weak var delegate: ISRewardedVideoAdDelegate?
-
+    
+    override init() {
+        VRTLogInfo()
+        super.init()
+    }
+    
+    override init(_ providerConfig: ISAdapterConfig) {
+        VRTLogInfo()
+        super.init(providerConfig)
+    }
+    
+    override init(adUnit: ISAdUnit, adapterConfig: ISAdapterConfig) {
+        VRTLogInfo()
+        super.init(adUnit: adUnit, adapterConfig: adapterConfig)
+    }
+    
+    override init(adUnit: ISAdUnit, adapterConfig: ISAdapterConfig, adUnitObjectId: UUID?) {
+        VRTLogInfo()
+        super.init(adUnit: adUnit, adapterConfig: adapterConfig, adUnitObjectId: adUnitObjectId)
+    }
+    
     override func loadAd(
         with adData: ISAdData,
         delegate: ISRewardedVideoAdDelegate
     ) {
-
-        self.delegate = delegate
-
+        VRTLogInfo()
+        self.isRewardedVideoAdDelegate = delegate
+        
         guard let strZoneId = adData.configuration["zoneid"] as? String,
-        let zoneId = Int(strZoneId),
-        zoneId > 0 else {
+              let zoneId = Int(strZoneId),
+              zoneId > 0 else {
             let vrtError = VRTError(
                 vrtErrorCode: .invalidParam,
                 message: "Unusable zoneid field in adData.configuration: \(adData.configuration). Vrtcal ads require a Zone ID (unsigned int) to serve ads"
             )
-
-            self.delegate?.adDidFailToLoadWith(
+            
+            self.isRewardedVideoAdDelegate?.adDidFailToLoadWith(
                 .internal,
                 errorCode: ISAdapterErrors.missingParams.rawValue,
                 errorMessage: "\(vrtError)"
             )
             return
         }
-
+        
         vrtInterstitial = VRTInterstitial()
         vrtInterstitial?.adDelegate = self
         vrtInterstitial?.loadAd(zoneId)
     }
-
+    
     override func isAdAvailable(with adData: ISAdData) -> Bool {
         return vrtcalAdLoaded
     }
-
+    
     func showAd(with viewController: UIViewController, adData: ISAdData, delegate: ISAdapterAdDelegate) {
         viewControllerForModalPresentation = viewController
         vrtInterstitial?.showAd()
     }
-
+    
     override func releaseMemory() {
         vrtcalAdLoaded = false
+        
+        vrtInterstitial?.adDelegate = nil
         vrtInterstitial = nil
+        isRewardedVideoAdDelegate = nil
     }
+}
 
-    // MARK: - VRTInterstitialDelegate
+// MARK: - VRTInterstitialDelegate
+extension ISVRTCALCustomRewardedVideo: VRTInterstitialDelegate {
 
     func vrtInterstitialAdClicked(_ vrtInterstitial: VRTInterstitial) {
-        delegate?.adDidClick()
+        VRTLogInfo()
+        isRewardedVideoAdDelegate?.adDidClick()
     }
 
     func vrtInterstitialAdDidDismiss(_ vrtInterstitial: VRTInterstitial) {
-        delegate?.adDidClose()
+        VRTLogInfo()
+        isRewardedVideoAdDelegate?.adDidClose()
     }
 
     func vrtInterstitialAdDidShow(_ vrtInterstitial: VRTInterstitial) {
-        delegate?.adDidShowSucceed()
-        delegate?.adDidOpen()
+        VRTLogInfo()
+        isRewardedVideoAdDelegate?.adDidShowSucceed()
+        isRewardedVideoAdDelegate?.adDidOpen()
     }
 
     func vrtInterstitialAdFailed(toLoad vrtInterstitial: VRTInterstitial, error: Error) {
-        delegate?.adDidFailToLoadWith(
+        VRTLogInfo("error: \(error)")
+        isRewardedVideoAdDelegate?.adDidFailToLoadWith(
             .noFill,
             errorCode: 0,
             errorMessage: "\(error)"
@@ -77,44 +108,47 @@ class ISVRTCALCustomRewardedVideo: ISBaseRewardedVideo, VRTInterstitialDelegate 
     }
 
     func vrtInterstitialAdFailed(toShow vrtInterstitial: VRTInterstitial, error: Error) {
-        delegate?.adDidFailToShowWithErrorCode(
+        VRTLogInfo()
+        isRewardedVideoAdDelegate?.adDidFailToShowWithErrorCode(
             ISAdapterErrors.internal.rawValue,
             errorMessage: "\(error)"
         )
     }
 
     func vrtInterstitialAdLoaded(_ vrtInterstitial: VRTInterstitial) {
+        VRTLogInfo()
         vrtcalAdLoaded = true
-        delegate?.adDidLoad()
+        isRewardedVideoAdDelegate?.adDidLoad()
     }
 
     func vrtInterstitialAdWillDismiss(_ vrtInterstitial: VRTInterstitial) {
-        //No ISAdapterAdDelegate analog to this
+        VRTLogInfo()
+        // No ISAdapterAdDelegate analog to this
     }
 
     func vrtInterstitialAdWillLeaveApplication(_ vrtInterstitial: VRTInterstitial) {
-        //No ISAdapterAdDelegate analog to this
+        VRTLogInfo()
+        // No ISAdapterAdDelegate analog to this
     }
 
     func vrtInterstitialAdWillShow(_ vrtInterstitial: VRTInterstitial) {
-        //No ISAdapterAdDelegate analog to this
+        VRTLogInfo()
+        // No ISAdapterAdDelegate analog to this
     }
 
     func vrtInterstitialVideoCompleted(_ vrtInterstitial: VRTInterstitial) {
-        delegate?.adDidEnd()
-        delegate?.adRewarded()
+        VRTLogInfo()
+        isRewardedVideoAdDelegate?.adDidEnd()
+        isRewardedVideoAdDelegate?.adRewarded()
     }
 
     func vrtInterstitialVideoStarted(_ vrtInterstitial: VRTInterstitial) {
-        delegate?.adDidStart()
+        VRTLogInfo()
+        isRewardedVideoAdDelegate?.adDidStart()
     }
 
     func vrtViewControllerForModalPresentation() -> UIViewController? {
+        VRTLogInfo()
         return viewControllerForModalPresentation
     }
 }
-
-//Dependencies
-
-
-//IronSource Rewarded Video Adapter, Vrtcal as Secondary

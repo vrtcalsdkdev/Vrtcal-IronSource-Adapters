@@ -12,31 +12,37 @@ import IronSource
 import VrtcalSDK
 
 //Used by Vrtcal as Secondary Adapters
-
-class ISVRTCALCustomAdapter: ISBaseNetworkAdapter {
-    private weak var isNetworkInitializationDelegate: ISNetworkInitializationDelegate?
+@objc(ISVRTCALCustomAdapter)
+final class ISVRTCALCustomAdapter: ISBaseNetworkAdapter {
     
-    init(_ adData: ISAdData?, delegate: ISNetworkInitializationDelegate?) {
-        super.init()
+    // Note: NOT WEAK
+    private var isNetworkInitializationDelegate: ISNetworkInitializationDelegate?
+    static var vrtcalInitialized = false
+    
+    public override func `init` (_ adData: ISAdData, delegate: ISNetworkInitializationDelegate) {
+        VRTLogInfo()
         
         //Get the app ID
-        let strAppId = adData?.configuration["appid"] as? String
+        let strAppId = adData.configuration["appid"] as? String
         let appId = Int(strAppId ?? "") ?? 0
         
         //Save the delegate
         isNetworkInitializationDelegate = delegate
         
         //Init the SDK
-        DispatchQueue.main.async(execute: {
+        if ISVRTCALCustomAdapter.vrtcalInitialized {
+            isNetworkInitializationDelegate?.onInitDidSucceed()
+        } else {
+            ISVRTCALCustomAdapter.vrtcalInitialized = true
             VrtcalSDK.initializeSdk(withAppId: appId, sdkDelegate: self)
-        })
+        }
     }
     
-    override func networkSDKVersion() -> String? {
+    public override func networkSDKVersion() -> String? {
         return VrtcalSDK.sdkVersion()
     }
     
-    override func adapterVersion() -> String? {
+    public override func adapterVersion() -> String? {
         return "1.0"
     }
 }
@@ -45,11 +51,12 @@ class ISVRTCALCustomAdapter: ISBaseNetworkAdapter {
 extension ISVRTCALCustomAdapter: VrtcalSdkDelegate {
 
     func sdkInitialized() {
+        VRTLogInfo()
         isNetworkInitializationDelegate?.onInitDidSucceed()
     }
 
     func sdkInitializationFailedWithError(_ error: Error) {
-        let description = "\(error)"
+        VRTLogInfo("error: \(error)")
         isNetworkInitializationDelegate?.onInitDidFailWithErrorCode(0, errorMessage: description)
     }
 }
