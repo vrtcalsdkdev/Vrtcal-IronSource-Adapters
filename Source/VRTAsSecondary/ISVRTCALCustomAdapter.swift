@@ -22,14 +22,17 @@ final class ISVRTCALCustomAdapter: ISBaseNetworkAdapter {
     public override func `init` (_ adData: ISAdData, delegate: ISNetworkInitializationDelegate) {
         VRTLogInfo()
         
-        //Get the app ID
+        // Since IronSource is Primary, blank out the mediation type
+        IronSource.setMediationType("")
+        
+        // Get the app ID
         let strAppId = adData.configuration["appid"] as? String
         let appId = Int(strAppId ?? "") ?? 0
         
-        //Save the delegate
+        // Save the delegate
         isNetworkInitializationDelegate = delegate
         
-        //Init the SDK
+        // Init the SDK
         if ISVRTCALCustomAdapter.vrtcalInitialized {
             isNetworkInitializationDelegate?.onInitDidSucceed()
         } else {
