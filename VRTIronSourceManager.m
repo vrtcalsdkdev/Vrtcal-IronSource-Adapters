@@ -10,7 +10,7 @@
 #import "VRTIronSourceManager.h"
 
 //Dependencies
-#import <VrtcalSDK/VrtcalSDK.h>
+@import VrtcalSDK;
 
 //Used by IronSource Interstitial Adapter, Vrtcal as Primary
 @interface VRTIronSourceManager ()
@@ -66,7 +66,7 @@
 - (void)requestInterstitialAdWithDelegate: (id<ISDemandOnlyInterstitialDelegate>)delegate instanceID:(NSString *)instanceID {
     
     if (delegate == nil) {
-        VRTLogError(@"Delegate is nil");
+        NSLog(@"🚨 delegate is nil");
         return;
     }
     
@@ -96,7 +96,7 @@
     if (delegate) {
         [delegate interstitialDidLoad:instanceId];
     } else {
-        VRTLogError(@"delegate is nil");
+        NSLog(@"🚨 delegate is nil");
     }
 }
 
@@ -106,7 +106,7 @@
         [delegate interstitialDidFailToLoadWithError:error instanceId:instanceId];
         [self removeInterstitialDelegateForInstanceID:instanceId];
     } else {
-        VRTLogError(@"delegate is nil");
+        NSLog(@"🚨 delegate is nil");
     }
 }
 
@@ -115,7 +115,7 @@
     if (delegate) {
         [delegate interstitialDidOpen:instanceId];
     } else {
-        VRTLogError(@"delegate is nil");
+        NSLog(@"🚨 delegate is nil");
     }
 }
 
@@ -125,7 +125,7 @@
         [delegate interstitialDidClose:instanceId];
         [self removeInterstitialDelegateForInstanceID:instanceId];
     } else {
-        VRTLogError(@"delegate is nil");
+        NSLog(@"🚨 delegate is nil");
     }
 }
 
@@ -135,7 +135,7 @@
         [delegate interstitialDidFailToShowWithError:error instanceId:instanceId];
         [self removeInterstitialDelegateForInstanceID:instanceId];
     } else {
-        VRTLogError(@"delegate is nil");
+        NSLog(@"🚨 delegate is nil");
     }
 }
 
@@ -144,7 +144,7 @@
     if (delegate) {
         [delegate didClickInterstitial:instanceId];
     } else {
-        VRTLogError(@"delegate is nil");
+        NSLog(@"🚨 delegate is nil");
     }
 }
 

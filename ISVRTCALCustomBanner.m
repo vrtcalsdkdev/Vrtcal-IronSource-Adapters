@@ -11,8 +11,8 @@
 //Header
 #import "ISVRTCALCustomBanner.h"
 
-//Dependencies
-#import <VrtcalSDK/VrtcalSDK.h>
+// Dependencies
+@import VrtcalSDK;
 #import "IronSource/ISAdData.h"
 #import "IronSource/ISAdapterAdDelegate.h"
 #import "IronSource/ISAdapterErrors.h"
@@ -37,10 +37,11 @@
     
     int zoneId = (int)[adData getInt:@"zid"];
     if (zoneId <= 0) {
-        NSError *error = [VRTError errorWithCode:VRTErrorCodeInvalidParam format:@"Unusable zoneId of %i. Vrtcal ads require a Zone ID (unsigned int) to serve ads", zoneId];
-        NSString *errorDescription = [error description];
-        
-        [self.delegate adDidFailToLoadWithErrorType:ISAdapterErrorTypeInternal errorCode:ISAdapterErrorMissingParams errorMessage:errorDescription];
+        [self.delegate
+            adDidFailToLoadWithErrorType:ISAdapterErrorTypeInternal
+            errorCode:ISAdapterErrorMissingParams
+            errorMessage: @"Unusable zoneId"
+        ];
         return;
     }
     
@@ -114,7 +115,7 @@
     //No ISAdapterAdDelegate analog to this
 }
 
-- (nonnull UIViewController *)vrtViewControllerForModalPresentation {
+- (UIViewController *)vrtViewControllerForModalPresentation {
     return self.viewControllerForModalPresentation;
 }
 

@@ -11,7 +11,7 @@
 #import "ISVRTCALCustomAdapter.h"
 
 //Dependencies
-#import <VrtcalSDK/VrtcalSDK.h>
+@import VrtcalSDK;
 
 //Used by Vrtcal as Secondary Adapters
 @interface ISVRTCALCustomAdapter() <VrtcalSdkDelegate>

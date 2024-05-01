@@ -5,7 +5,7 @@
 //  Copyright © 2021 VRTCAL. All rights reserved.
 //
 
-#import <VrtcalSDK/VrtcalSDK.h>
+@import VrtcalSDK;
 
 //IronSource Interstitial Adapter, Vrtcal as Primary
 @interface VRTInterstitialCustomEventIronSource : VRTAbstractInterstitialCustomEvent

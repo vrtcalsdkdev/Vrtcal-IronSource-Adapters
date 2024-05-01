@@ -10,9 +10,10 @@
 
 //Dependencies
 #import "VRTIronSourceManager.h"
+#import <IronSource/IronSource.h>
 
 //IronSource Interstitial Adapter, Vrtcal as Primary
-@interface VRTInterstitialCustomEventIronSource() <ISInterstitialDelegate>
+@interface VRTInterstitialCustomEventIronSource() <ISInterstitialAdDelegate>
 @property NSString *instanceId;
 @end
 
