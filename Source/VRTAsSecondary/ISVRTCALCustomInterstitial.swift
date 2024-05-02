@@ -1,11 +1,3 @@
-//  ISVRTCALCustomInterstitial.swift
-//  VrtcalSDKInternalTestApp
-//
-//  Created by Scott McCoy on 12/20/21.
-//  Copyright © 2021 VRTCAL. All rights reserved.
-//
-
-//Header
 import Foundation
 import IronSource
 import VrtcalSDK
@@ -34,7 +26,6 @@ final class ISVRTCALCustomInterstitial: ISBaseInterstitial {
         super.init(adUnit: adUnit, adapterConfig: adapterConfig, adUnitObjectId: adUnitObjectId)
     }
     
-    
     public override func loadAd(
         with adData: ISAdData,
         delegate: ISInterstitialAdDelegate
@@ -43,7 +34,8 @@ final class ISVRTCALCustomInterstitial: ISBaseInterstitial {
 
         ISVRTCALInterstitialManager.singletonInterstitial.loadAd(
             isAdData: adData,
-            isInterstitialAdDelegate: delegate
+            isInterstitialAdDelegate: delegate,
+            isRewardedVideoAdDelegate: nil
         )
     }
 
@@ -62,7 +54,8 @@ final class ISVRTCALCustomInterstitial: ISBaseInterstitial {
         VRTLogInfo()
         ISVRTCALInterstitialManager.singletonInterstitial.showAd(
             uiViewController: viewController,
-            isInterstitialAdDelegate: delegate
+            isInterstitialAdDelegate: delegate,
+            isRewardedVideoAdDelegate: nil
         )
     }
 

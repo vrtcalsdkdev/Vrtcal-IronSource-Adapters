@@ -12,6 +12,7 @@ enum InterstitialManagerStatus {
     case empty
     case loading
     case loaded
+    case showing
 }
 
 class ISVRTCALInterstitialManager {
@@ -24,7 +25,8 @@ class ISVRTCALInterstitialManager {
     
     // IronSource
     // Note: This has to be a strong reference
-    private var isInterstitialAdDelegate: ISInterstitialAdDelegate?
+    private weak var isInterstitialAdDelegate: ISInterstitialAdDelegate?
+    private weak var isRewardedVideoAdDelegate: ISRewardedVideoAdDelegate?
     
     // Vrtcal
     private weak var viewControllerForModalPresentation: UIViewController?
@@ -38,11 +40,13 @@ class ISVRTCALInterstitialManager {
     
     func loadAd(
         isAdData: ISAdData,
-        isInterstitialAdDelegate: ISInterstitialAdDelegate
+        isInterstitialAdDelegate: ISInterstitialAdDelegate?,
+        isRewardedVideoAdDelegate: ISRewardedVideoAdDelegate?
     ) {
-        VRTLogInfo("name: \(name), status: \(status)")
-  
+        VRTLogInfo("🎉🎉🎉🎉 name: \(name), status: \(status)")
+        
         self.isInterstitialAdDelegate = isInterstitialAdDelegate
+        self.isRewardedVideoAdDelegate = isRewardedVideoAdDelegate
         
         switch status {
         case .empty:
@@ -50,12 +54,17 @@ class ISVRTCALInterstitialManager {
             break
             
         case .loading:
-            VRTLogInfo("Already Loading ad...")
+            VRTLogInfo("Already showing ad. Bailing.")
+            return
+            
+        case .showing:
+            VRTLogInfo("Already showing ad. Bailing.")
             return
             
         case .loaded:
-            VRTLogInfo("Already loaded")
-            isInterstitialAdDelegate.adDidLoad()
+            VRTLogInfo("Already loaded. Calling adDidLoad.")
+            isInterstitialAdDelegate?.adDidLoad()
+            isRewardedVideoAdDelegate?.adDidLoad()
             return
         }
         
@@ -71,7 +80,13 @@ class ISVRTCALInterstitialManager {
                 message: "Unusable zoneid field in adData.configuration: \(isAdData.configuration). Vrtcal ads require a Zone ID (unsigned int) to serve ads"
             )
 
-            isInterstitialAdDelegate.adDidFailToLoadWith(
+            isInterstitialAdDelegate?.adDidFailToLoadWith(
+                .internal,
+                errorCode: ISAdapterErrors.missingParams.rawValue,
+                errorMessage: "\(vrtError)"
+            )
+            
+            isRewardedVideoAdDelegate?.adDidFailToLoadWith(
                 .internal,
                 errorCode: ISAdapterErrors.missingParams.rawValue,
                 errorMessage: "\(vrtError)"
@@ -92,17 +107,24 @@ class ISVRTCALInterstitialManager {
     
     func showAd(
         uiViewController: UIViewController,
-        isInterstitialAdDelegate: ISInterstitialAdDelegate
+        isInterstitialAdDelegate: ISInterstitialAdDelegate?,
+        isRewardedVideoAdDelegate: ISRewardedVideoAdDelegate?
     ) {
         VRTLogInfo("name: \(name), status: \(status)")
+        
+        status = .showing
+        
         self.isInterstitialAdDelegate = isInterstitialAdDelegate
+        self.isRewardedVideoAdDelegate = isRewardedVideoAdDelegate
         viewControllerForModalPresentation = uiViewController
+        
         vrtInterstitial?.showAd()
     }
     
     func releaseMemory() {
         VRTLogInfo()
         isInterstitialAdDelegate = nil
+        isRewardedVideoAdDelegate = nil
     }
 }
 
@@ -113,22 +135,38 @@ extension ISVRTCALInterstitialManager: VRTInterstitialDelegate {
     func vrtInterstitialAdClicked(_ vrtInterstitial: VRTInterstitial) {
         VRTLogInfo()
         isInterstitialAdDelegate?.adDidClick()
+        isRewardedVideoAdDelegate?.adDidClick()
     }
 
     func vrtInterstitialAdDidDismiss(_ vrtInterstitial: VRTInterstitial) {
         VRTLogInfo()
+        
+        status = .empty
+        
         isInterstitialAdDelegate?.adDidClose()
+        isRewardedVideoAdDelegate?.adDidClose()
     }
 
     func vrtInterstitialAdDidShow(_ vrtInterstitial: VRTInterstitial) {
         VRTLogInfo()
+        
         isInterstitialAdDelegate?.adDidShowSucceed()
+        isRewardedVideoAdDelegate?.adDidShowSucceed()
+        
         isInterstitialAdDelegate?.adDidOpen()
+        isRewardedVideoAdDelegate?.adDidOpen()
     }
 
     func vrtInterstitialAdFailed(toLoad vrtInterstitial: VRTInterstitial, error: Error) {
         VRTLogInfo("error: \(error)")
+        
         isInterstitialAdDelegate?.adDidFailToLoadWith(
+            .noFill,
+            errorCode: 0,
+            errorMessage: "\(error)"
+        )
+        
+        isRewardedVideoAdDelegate?.adDidFailToLoadWith(
             .noFill,
             errorCode: 0,
             errorMessage: "\(error)"
@@ -139,9 +177,15 @@ extension ISVRTCALInterstitialManager: VRTInterstitialDelegate {
         toShow vrtInterstitial: VRTInterstitial,
         error: Error
     ) {
-        VRTLogInfo()
+        VRTLogInfo("error: \(error)")
         status = .empty
+        
         isInterstitialAdDelegate?.adDidFailToShowWithErrorCode(
+            ISAdapterErrors.internal.rawValue,
+            errorMessage: "\(error)"
+        )
+        
+        isRewardedVideoAdDelegate?.adDidFailToShowWithErrorCode(
             ISAdapterErrors.internal.rawValue,
             errorMessage: "\(error)"
         )
@@ -150,34 +194,41 @@ extension ISVRTCALInterstitialManager: VRTInterstitialDelegate {
     func vrtInterstitialAdLoaded(
         _ vrtInterstitial: VRTInterstitial
     ) {
-        VRTLogInfo()
+        VRTLogInfo("🎉🎉🎉🎉")
         status = .loaded
+
         isInterstitialAdDelegate?.adDidLoad()
+        isRewardedVideoAdDelegate?.adDidLoad()
     }
 
     func vrtInterstitialAdWillDismiss(_ vrtInterstitial: VRTInterstitial) {
         VRTLogInfo()
-        // No ISAdapterAdDelegate analog to this
+        // No ISInterstitialAdDelegate analog
+        // No ISRewardedVideoAdDelegate analog
     }
 
     func vrtInterstitialAdWillLeaveApplication(_ vrtInterstitial: VRTInterstitial) {
         VRTLogInfo()
-        // No ISAdapterAdDelegate analog to this
+        // No ISInterstitialAdDelegate analog
+        // No ISRewardedVideoAdDelegate analog
     }
 
     func vrtInterstitialAdWillShow(_ vrtInterstitial: VRTInterstitial) {
         VRTLogInfo()
-        // No ISAdapterAdDelegate analog to this
+        // No ISInterstitialAdDelegate analog
+        // No ISRewardedVideoAdDelegate analog
     }
 
     func vrtInterstitialVideoCompleted(_ vrtInterstitial: VRTInterstitial) {
         VRTLogInfo()
-        isInterstitialAdDelegate?.adDidEnd()
+        // No ISInterstitialAdDelegate analog
+        isRewardedVideoAdDelegate?.adDidEnd()
     }
 
     func vrtInterstitialVideoStarted(_ vrtInterstitial: VRTInterstitial) {
         VRTLogInfo()
-        isInterstitialAdDelegate?.adDidStart()
+        // No ISInterstitialAdDelegate analog
+        isRewardedVideoAdDelegate?.adDidStart()
     }
 
     func vrtViewControllerForModalPresentation() -> UIViewController? {
