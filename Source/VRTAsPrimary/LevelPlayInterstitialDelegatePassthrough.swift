@@ -15,18 +15,13 @@ class LevelPlayInterstitialDelegatePassthrough: NSObject {
 
 extension LevelPlayInterstitialDelegatePassthrough: LevelPlayInterstitialDelegate {
 
-    func didClick(with adInfo: ISAdInfo!) {
+    func didLoad(with adInfo: ISAdInfo!) {
         VRTLogInfo()
-        customEventShowDelegate?.customEventClicked()
+        customEventLoadDelegate?.customEventLoaded()
     }
-
-    func didClose(with adInfo: ISAdInfo!) {
-        VRTLogInfo()
-        customEventShowDelegate?.customEventDidDismissModal(.interstitial)
-    }
-
+    
     func didFailToLoadWithError(_ error: (any Error)!) {
-        VRTLogInfo()
+        VRTLogInfo("error: \(error!)")
         
         let vrtError = VRTError(
             vrtErrorCode: .customEvent,
@@ -35,17 +30,7 @@ extension LevelPlayInterstitialDelegatePassthrough: LevelPlayInterstitialDelegat
         
         customEventLoadDelegate?.customEventFailedToLoad(vrtError: vrtError)
     }
-
-    func didFailToShowWithError(_ error: (any Error)!, andAdInfo adInfo: ISAdInfo!) {
-        //No VRT analog for this
-        VRTLogInfo()
-    }
-
-    func didLoad(with adInfo: ISAdInfo!) {
-        VRTLogInfo()
-        customEventLoadDelegate?.customEventLoaded()
-    }
-
+    
     func didOpen(with adInfo: ISAdInfo!) {
         VRTLogInfo()
         customEventShowDelegate?.customEventWillPresentModal(.interstitial)
@@ -54,5 +39,20 @@ extension LevelPlayInterstitialDelegatePassthrough: LevelPlayInterstitialDelegat
     func didShow(with adInfo: ISAdInfo!) {
         VRTLogInfo()
         customEventShowDelegate?.customEventDidPresentModal(.interstitial)
+    }
+    
+    func didFailToShowWithError(_ error: (any Error)!, andAdInfo adInfo: ISAdInfo!) {
+        //No VRT analog for this
+        VRTLogInfo()
+    }
+    
+    func didClick(with adInfo: ISAdInfo!) {
+        VRTLogInfo()
+        customEventShowDelegate?.customEventClicked()
+    }
+
+    func didClose(with adInfo: ISAdInfo!) {
+        VRTLogInfo()
+        customEventShowDelegate?.customEventDidDismissModal(.interstitial)
     }
 }

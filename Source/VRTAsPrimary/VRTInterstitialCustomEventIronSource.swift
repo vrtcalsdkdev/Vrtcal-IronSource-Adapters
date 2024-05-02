@@ -16,7 +16,9 @@ class VRTInterstitialCustomEventIronSource: VRTAbstractInterstitialCustomEvent {
     var levelPlayInterstitialDelegatePassthrough = LevelPlayInterstitialDelegatePassthrough()
     
     override func loadInterstitialAd() {
-
+        VRTLogInfo()
+        
+        // Bail if IS is already initialized
         guard !Self.ironSourceInitialized else {
             finishLoadingInterstitial()
             return
@@ -39,7 +41,6 @@ class VRTInterstitialCustomEventIronSource: VRTAbstractInterstitialCustomEvent {
         let mediationType = "\(mediationName)\(isMediationVersion)SDK\(vrtcalSdkVersion)"
         IronSource.setMediationType(mediationType)
 
-        // Not currently a version of this with a delegate. Perhaps Demand Only Mode doesn't require initialization?
         IronSource.initWithAppKey(
             appKey,
             adUnits: [IS_INTERSTITIAL],
@@ -58,8 +59,11 @@ class VRTInterstitialCustomEventIronSource: VRTAbstractInterstitialCustomEvent {
     }
     
     func finishLoadingInterstitial() {
+        VRTLogInfo()
+
         // Check if an interstitial is ready
         if IronSource.hasInterstitial() {
+            VRTLogInfo("IronSource has interstitial, bailing")
             customEventLoadDelegate?.customEventLoaded()
             return
         }
@@ -75,6 +79,7 @@ class VRTInterstitialCustomEventIronSource: VRTAbstractInterstitialCustomEvent {
 
 extension VRTInterstitialCustomEventIronSource: ISInitializationDelegate {
     func initializationDidComplete() {
+        VRTLogInfo()
         finishLoadingInterstitial()
     }
 }
