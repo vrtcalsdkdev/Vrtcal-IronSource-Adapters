@@ -51,6 +51,10 @@ class VRTInterstitialCustomEventIronSource: VRTAbstractInterstitialCustomEvent {
     }
 
     override func showInterstitialAd() {
+        VRTLogInfo()
+        
+        levelPlayInterstitialDelegatePassthrough.customEventShowDelegate = customEventShowDelegate
+        
         guard let vc = viewControllerDelegate?.vrtViewControllerForModalPresentation() else {
             customEventShowDelegate?.customEventFailedToShow(vrtError: .customEventViewControllerNil)
             return

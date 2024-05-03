@@ -30,7 +30,7 @@ final class ISVRTCALCustomRewardedVideo: ISBaseRewardedVideo {
         with adData: ISAdData,
         delegate: ISRewardedVideoAdDelegate
     ) {
-        VRTLogInfo("🎉🎉🎉🎉")
+        VRTLogInfo()
         
         ISVRTCALInterstitialManager.singletonRewardedVideo.loadAd(
             isAdData: adData,

@@ -42,7 +42,7 @@ class ISVRTCALInterstitialManager {
         isInterstitialAdDelegate: ISInterstitialAdDelegate?,
         isRewardedVideoAdDelegate: ISRewardedVideoAdDelegate?
     ) {
-        VRTLogInfo("🎉🎉🎉🎉 name: \(name), status: \(status)")
+        VRTLogInfo("name: \(name), status: \(status)")
         
         self.isInterstitialAdDelegate = isInterstitialAdDelegate
         self.isRewardedVideoAdDelegate = isRewardedVideoAdDelegate
@@ -132,7 +132,7 @@ extension ISVRTCALInterstitialManager: VRTInterstitialDelegate {
     func vrtInterstitialAdLoaded(
         _ vrtInterstitial: VRTInterstitial
     ) {
-        VRTLogInfo("🎉🎉🎉🎉")
+        VRTLogInfo()
         status = .loaded
 
         isInterstitialAdDelegate?.adDidLoad()
