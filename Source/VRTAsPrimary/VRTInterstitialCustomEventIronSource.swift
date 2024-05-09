@@ -11,7 +11,7 @@ import IronSource
 
 //IronSource Interstitial Adapter, Vrtcal as Primary
 
-class VRTInterstitialCustomEventIronSource: VRTAbstractInterstitialCustomEvent {
+class VRTInterstitialCustomEventIronSource: VRTAbstractInterstitialCustomEvent, ISInitializationDelegate {
     static var ironSourceInitialized = false
     var levelPlayInterstitialDelegatePassthrough = LevelPlayInterstitialDelegatePassthrough()
     
@@ -79,9 +79,7 @@ class VRTInterstitialCustomEventIronSource: VRTAbstractInterstitialCustomEvent {
         IronSource.setLevelPlayInterstitialDelegate(levelPlayInterstitialDelegatePassthrough)
         IronSource.loadInterstitial()
     }
-}
 
-extension VRTInterstitialCustomEventIronSource: ISInitializationDelegate {
     func initializationDidComplete() {
         VRTLogInfo()
         finishLoadingInterstitial()
