@@ -25,12 +25,10 @@ class VRTInterstitialCustomEventIronSource: VRTAbstractInterstitialCustomEvent, 
         }
         
         // Get and validate app ID
-        guard let appKey = customEventConfig.thirdPartyAppId(
+        guard let appKey = customEventConfig.thirdPartyCustomEventDataValueOrFailToLoad(
+            thirdPartyCustomEventKey: ThirdPartyCustomEventKey.appId,
             customEventLoadDelegate: customEventLoadDelegate
         ) else {
-            customEventLoadDelegate?.customEventFailedToLoad(
-                vrtError: VRTError(vrtErrorCode: .customEvent, message: "Could not get appKey")
-            )
             return
         }
         
